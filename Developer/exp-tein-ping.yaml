@@ -1,0 +1,478 @@
+--- 
+- 
+    id: 51:00:00:00:00:00:00:00
+    name: GIST (Type B+)
+    type: BOX
+    image_path: green
+    x: 40
+    y: 20
+    width: 350
+    height: 300
+- 
+    id: 52:00:00:00:00:00:00:00
+    name: Malaysia MYREN (Type B+)
+    type: BOX
+    image_path: green
+    x: 40
+    y: 560
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:01
+    name: GIST-TEST (Type B+)
+    type: BOX
+    image_path: green
+    x: 580
+    y: 20
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:02
+    name: Thailand (Type B+)
+    type: BOX
+    image_path: green
+    x: 700
+    y: 560
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:03
+    name: Malaysia UM (Type B+)
+    type: BOX
+    image_path: green
+    x: 380
+    y: 560
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:04
+    name: Indonesia (Type B+)
+    type: BOX
+    image_path: green
+    x: 1040
+    y: 380
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:05
+    name: Philippines (Type B+)
+    type: BOX
+    image_path: green
+    x: 1040
+    y: 200
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:06
+    name: Vietnam (Type B+)
+    type: BOX
+    image_path: green
+    x: 1040
+    y: 20
+    width: 200
+    height: 100
+- 
+    id: 52:00:00:00:00:00:00:07
+    name: Pakistan (Type B+)
+    type: BOX
+    image_path: green
+    x: 1040
+    y: 560
+    width: 200
+    height: 100
+- 
+    id: 60:00:00:00:00:00:00:00
+    name: ~
+    type: LOGO
+    image_path: images/GIST.png
+    x: 90
+    y: 65
+    width: 80
+    height: 80
+- 
+    id: 60:00:00:00:00:00:00:01
+    name: ~
+    type: LOGO
+    image_path: images/GIST.png
+    x: 810
+    y: 60
+    width: 50
+    height: 50
+- 
+    id: 60:00:00:00:00:00:00:02
+    name: ~
+    type: LOGO
+    image_path: images/ITB_logo.png
+    x: 1280
+    y: 410
+    width: 50
+    height: 50
+- 
+    id: 60:00:00:00:00:00:00:03
+    name: ~
+    type: LOGO
+    image_path: images/UM_logo.png
+    x: 600
+    y: 670
+    width: 80
+    height: 50
+- 
+    id: 60:00:00:00:00:00:00:04
+    name: ~
+    type: LOGO
+    image_path: images/CHULA_logo.png
+    x: 920
+    y: 670
+    width: 40
+    height: 50
+- 
+    id: 60:00:00:00:00:00:00:05
+    name: ~
+    type: LOGO
+    image_path: images/HUT_logo.png
+    x: 1280
+    y: 50
+    width: 40
+    height: 50
+- 
+    id: 60:00:00:00:00:00:00:06
+    name: ~
+    type: LOGO
+    image_path: images/ASTI_logo.png
+    x: 1280
+    y: 240
+    width: 45
+    height: 45
+- 
+    id: 60:00:00:00:00:00:00:07
+    name: ~
+    type: LOGO
+    image_path: images/MYREN_logo.png
+    x: 80
+    y: 670
+    width: 60
+    height: 40
+- 
+    id: 60:00:00:00:00:00:00:08
+    name: ~
+    type: LOGO
+    image_path: images/PERN_logo.gif
+    x: 1280
+    y: 670
+    width: 60
+    height: 40
+- 
+    id: 00:02:2c:41:38:24:61:40
+    name: ""
+    type: ~
+    image_path: image/procurve.png
+    x: 640
+    y: 110
+    width: 60
+    height: 40
+- 
+    id: 0a:90:c0:91:34:35:ef:00
+    name: ""
+    type: ~
+    image_path: ~
+    x: 300
+    y: 240
+    width: 80
+    height: 60
+- 
+    id: 00:02:28:92:4a:7c:cc:80
+    name: ""
+    type: ~
+    image_path: ~
+    x: 480
+    y: 640
+    width: 80
+    height: 60
+- 
+    id: 00:02:28:92:4a:6e:40:80
+    name: ""
+    type: ~
+    image_path: ~
+    x: 840
+    y: 640
+    width: 80
+    height: 60
+- 
+    id: 00:02:28:92:4a:6d:18:c0
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1100
+    y: 280
+    width: 80
+    height: 60
+- 
+    id: 00:02:28:92:4a:7c:39:00
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1100
+    y: 100
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:00
+    name: ""
+    type: ~
+    image_path: ~
+    x: 180
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:01
+    name: ""
+    type: ~
+    image_path: ~
+    x: 260
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:03
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1180
+    y: 480
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:04
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1100
+    y: 480
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:05
+    name: ""
+    type: ~
+    image_path: ~
+    x: 510
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:06
+    name: ""
+    type: ~
+    image_path: ~
+    x: 430
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:07
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1180
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:08
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1100
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:09
+    name: ""
+    type: ~
+    image_path: ~
+    x: 710
+    y: 120
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:10
+    name: ""
+    type: ~
+    image_path: ~
+    x: 630
+    y: 120
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:11
+    name: ""
+    type: ~
+    image_path: ~
+    x: 830
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:12
+    name: ""
+    type: ~
+    image_path: ~
+    x: 750
+    y: 630
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:13
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1180
+    y: 110
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:14
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1100
+    y: 110
+    width: 80
+    height: 60        
+- 
+    id: 00:00:11:11:11:11:11:15
+    name: ""
+    type: ~
+    image_path: ~
+    x: 300
+    y: 300
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:16
+    name: ""
+    type: ~
+    image_path: ~
+    x: 380
+    y: 300
+    width: 80
+    height: 60        
+- 
+    id: 00:00:11:11:11:11:11:17
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1100
+    y: 290
+    width: 80
+    height: 60
+- 
+    id: 00:00:11:11:11:11:11:18
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1180
+    y: 290
+    width: 80
+    height: 60     
+- 
+    id: 00:00:00:ca:fe:ba:be:00
+    name: ""
+    type: ~
+    image_path: ~
+    x: 790
+    y: 120
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:01
+    name: ""
+    type: ~
+    image_path: ~
+    x: 920
+    y: 630
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:02
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1260
+    y: 480
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:03
+    name: ""
+    type: ~
+    image_path: ~
+    x: 590
+    y: 630
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:04
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1250
+    y: 280
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:05
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1260
+    y: 110
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:06
+    name: ""
+    type: ~
+    image_path: ~
+    x: 100
+    y: 630
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:07
+    name: ""
+    type: ~
+    image_path: ~
+    x: 1260
+    y: 630
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:08
+    name: ""
+    type: ~
+    image_path: ~
+    x: 190
+    y: 300
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:ca:fe:ba:be:31
+    name: ""
+    type: ~
+    image_path: ~
+    x: 140
+    y: 240
+    width: 40
+    height: 40
+- 
+    id: 00:00:00:26:b9:47:35:e9
+    name: ""
+    type: ~
+    image_path: ~
+    x: 160
+    y: 240
+    width: 80
+    height: 60

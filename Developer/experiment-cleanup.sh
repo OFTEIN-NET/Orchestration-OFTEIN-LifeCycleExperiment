@@ -15,7 +15,7 @@ FLOWVISOR="103.22.221.52"
 USERCTRL="103.22.221.140"
 SLICE="exp-tein-2013"
 FLOWSPACE="192.168.2.0"
-BP_SITES="TEST GIST" # separated by spaces
+BP_SITES="MYREN GIST" # separated by spaces
 
 # Main Script
 
@@ -64,9 +64,9 @@ RESULT2=`ssh netcs@$FLOWVISOR fvctl-json --passwd-file=passwd list-flowspace|gre
 if [ -n "$RESULT2" ]; then
         echo -e "FlowVisor have correct FlowSpace"
 		echo -e "Deleting FlowSpace from FV...\n"
-        ssh netcs@$USERCTRL "~/tein2013/experiment/close_exp.sh ~/tein2013/experiment/$SLICE"
-        ssh netcs@$USERCTRL "~/tein2013/experiment/close_flowspaces.sh ~/tein2013/experiment/$SLICE"
-		ssh netcs@$USERCTRL "kill -9 $(ps -aux | grep nox | awk '{print $2}')"
+        #ssh netcs@$USERCTRL "~/tein2013/experiment/close_exp.sh ~/tein2013/experiment/$SLICE"
+        #ssh netcs@$USERCTRL "~/tein2013/experiment/close_flowspaces.sh ~/tein2013/experiment/$SLICE"
+		#ssh netcs@$USERCTRL "kill -9 $(ps -aux | grep nox | awk '{print $2}')"
 else
         echo -e "FlowVisor don't have FlowSpace\n"
 fi

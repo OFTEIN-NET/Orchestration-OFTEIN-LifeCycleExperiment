@@ -1,419 +1,265 @@
 #!/bin/bash
-
 #
-# Name 			: experiment-check-video.sh
-# Description	: Script for OF@TEIN Infrastructure Resources Checking and Verification
-#
-# Created by    : TEIN_GIST@nm.gist.ac.kr
-# Version       : 0.5
-# Last Update	: March, 2014
+# Script Name	: vlc_experiment_start.sh
+# Description	: Script for execute vlc video server and client remotely
+# Version		: 0.1
+# Last Update	: June 2014
 #
 
-# Configuration Parameter
-
-REPOSITORY="103.22.221.32"
-FLOWVISOR="103.22.221.52"
 SDNTOOLSVR="103.22.221.53"
-USERCTRL="103.22.221.140"
-SLICE="exp-tein-2013"
-FLOWSPACE="192.168.2.0"
 LOGDIR="log"
-LOGRES="result"
-LOGFILE=experiment.check.`date +%Y%m%d.%H%M%S`.log
-B_SITES="" # separated by spaces
-BP_SITES="GIST ID MYREN" # TEST ID MYREN MY PKS PH TH VN" # separated by spaces
+LOGFILE=experiment.video.`date +%Y%m%d.%H%M%S`.log
+SVR_SITES="MYREN" # separated by spaces
 
-# Function Definition
-# ===================
+# Start VLC video server in the experiment VM (remote site) and run it at background
 #
-# [1] FlowSpace Resource Checking
+# Current testing at "TEST" and "ID" site
 #
 
-function check_flowspace {
-
-	RESULT2=`ssh netcs@$FLOWVISOR fvctl-json --passwd-file=passwd list-flowspace|grep $FLOWSPACE`
-	
-	echo -e "\n"
-	echo -e "--------------------------------------------------------------"
-	echo -e "| Checking FlowSpace Resource for Experiment (192.168.2.0/24)|"
-	echo -e "--------------------------------------------------------------"
-	echo -e "\n"
-
-	if [ -n "$RESULT2" ]; then
-        	echo "FlowVisor have correct FlowSpace."
-			FLOWSPACE_RESULT="OK"
-	else
-        	echo "FlowVisor don't have FlowSpace."
-        	echo "Push FlowSpace to FV..."
-        	ssh netcs@$USERCTRL "~/tein2013/experiment/prepare_exp.sh ~/tein2013/experiment/$SLICE" >> $LOGDIR/$LOGFILE 2>&1
-        	ssh netcs@$USERCTRL "~/tein2013/experiment/prepare_flowspaces.sh ~/tein2013/experiment/$SLICE" >> $LOGDIR/$LOGFILE 2>&1
-		
-		RESULT3=`ssh netcs@$FLOWVISOR fvctl-json --passwd-file=passwd list-flowspace|grep $FLOWSPACE`
-		
-		if [ -n "$RESULT3" ]; then
-			echo "FlowVisor have correct FlowSpace."
-			FLOWSPACE_RESULT="OK"
-		else
-			echo "Failed to Push FlowSpace to FV !!!"
-			echo "Please contact your administrator !!!"
-			FLOWSPACE_RESULT="FAILED"
-		fi	
-		
-	fi
-
-	
-	if [ $FLOWSPACE_RESULT = "OK" ]; then
-		export FLOW_RESULT="\033[32m[$FLOWSPACE_RESULT]\033[0m"
-	else
-		export FLOW_RESULT="\033[31m[$FLOWSPACE_RESULT]\033[0m"
-	fi
-	
-}
-#
-# [2] Networking Resource Checking
-#
-
-function check_network {
+function vlc_check {
 
 echo -e "\n"
-echo -e "--------------------------------------------------"
-echo -e "| Start Network Resource Checking for Experiment |"
-echo -e "--------------------------------------------------"
-echo -e "\n"
+echo -e "----------------------------------------"
+echo -e "| Checking VLC Packages for Experiment |"
+echo -e "----------------------------------------"
 
-for countryID in $B_SITES $BP_SITES MY2 PK VT
+for countryID in $SVR_SITES 
 	do
-		echo -e "Checking Tunnel for smartx-B-$countryID"
-		echo -e "--------------------------------"
+		echo -e "\nChecking VLC Packages for exp-vm-Smartx-BPlus-$countryID"
+		echo -e "---------------------------------------------------\n"
 		
- 		TUNNEL_NAME=GJ"$countryID"
- 
-		TUNNEL=`ssh netcs@$SDNTOOLSVR "cat ~/AdminSDNController/Tunnel/active_tunnel.list|grep $TUNNEL_NAME"`
+ 		VLC=`ssh root@exp-vm-smartx-bplus-$countryID 'dpkg -l | grep vlc'`
 
-		if [ "${TUNNEL:-null}" = null ]; then
-			echo -e "Tunnel for smartx-B-$countryID is Down !!!"
-			echo -e "Please contact your Administrator.\n"
-			TUNNEL_RESULT="FAILED"
-		else
-			echo -e "Tunnel for smartx-B-$countryID is Up.\n"
-			TUNNEL_RESULT="OK"
-
-		fi
-
-	echo -e "\nChecking done for smartx-B-$countryID.\n"
-	
-	if [ "$TUNNEL_RESULT" =	"OK" ]; then
-		export TUNNEL_RESULT_$countryID="\033[32m[$TUNNEL_RESULT]\033[0m"
-	else
-		export TUNNEL_RESULT_$countryID="\033[31m[$TUNNEL_RESULT]\033[0m"
-	fi
-		
-	done
-
-echo -e "Network Resources Checking Done.\n"
-
-}
-	
-#
-# [3] Compute Resource Checking
-#
-
-function check_compute {
-
-	echo -e "\n"
-	echo -e "--------------------------------------------------"
-	echo -e "| Start Compute Resource Checking for Experiment |"
-	echo -e "--------------------------------------------------"
-	echo -e "\n"
-
-	for countryID in $B_SITES
-	do
-		echo -e "Checking for Smartx-B-$countryID"
-		echo -e "------------------------"
- 
-		PING=`ping Smartx-B-$countryID -c 1 | grep icmp_req`
-
-		if [ "${PING:-null}" = null ]; then
-			echo "Host Smartx-B-$countryID is not reachable !!!"
-			COMPUTE_RESULT="FAILED"
-		else
-			echo "Host Smartx-B-$countryID is reachable."
-    
-			XEN=`ssh root@Smartx-B-$countryID 'xm list | grep Domain-0'`
-    
-			if [ "${XEN:-null}" = null ]; then
-				echo "XEN Domain-0 (Hypervisor) is not running !!!"
-				echo "Please contact the administrator !!!"
-				COMPUTE_RESULT="FAILED"	
-			else
-				echo "XEN Domain-0 (Hypervisor) is running."
-			fi
-
-			VM=`ssh root@Smartx-B-$countryID 'xm list | grep experiment-vm'`
-
-			if [ "${VM:-null}" = null ]; then
-				echo "Experiment Virtual Machine is not started yet !!!"
-				echo "Starting Experiment Virtual Machine..."
-				ssh root@Smartx-B-$countryID "scp netcs@$SDNTOOLSVR:Exp-LifeCycle-Mgmt/ubuntu-experiment-vm-Smartx-B-$countryID.cfg ." >> $LOGDIR/$LOGFILE 2>&1
-				ssh root@Smartx-B-$countryID "xm create /root/ubuntu-experiment-vm-Smartx-B-$countryID.cfg" >> $LOGDIR/$LOGFILE 2>&1
-				sleep 5
-				
-				VM2=`ssh root@Smartx-B-$countryID 'xm list | grep experiment-vm'`
-				
-				if [ "${VM2:-null}" = null ]; then
-					echo "Experiment Virtual Machine is failed to start !!!"
-					COMPUTE_RESULT="FAILED"
-				else
-					echo "Experiment Virtual Machine is started."
-				fi
-				
-			else
-				echo "Experiment Virtual Machine is already started."
-			fi
-			
-			VM_PING=`ping ubuntu-experiment-vm-Smartx-B-$countryID -c 1 | grep icmp_req`
-
-			if [ "${VM_PING:-null}" = null ]; then	
-				echo "Experiment Virtual Machine is not reachable !!!"
-				COMPUTE_RESULT="FAILED"
-			else
-				echo "Experiment Virtual Machine is reachable."
-				COMPUTE_RESULT="OK"	
-			fi
-    	
-		fi
-
-	echo -e "\nChecking done for Smartx-B-$countryID.\n"
-	
-	if [ "$COMPUTE_RESULT" =	"OK" ]; then
-		export COMPUTE_RESULT_$countryID="\033[32m[$COMPUTE_RESULT]\033[0m"
-	else
-		export COMPUTE_RESULT_$countryID="\033[31m[$COMPUTE_RESULT]\033[0m"
-	fi
-	
-	done
-	
-	
-	for countryID in $BP_SITES
-	do
-		echo -e "Checking for Smartx-BPlus-$countryID"
-		echo -e "----------------------------"
- 
-		PING=`ping Smartx-BPlus-$countryID -c 1 | grep icmp_req`
-
-		if [ "${PING:-null}" = null ]; then
-			echo "Host Smartx-BPlus-$countryID is not reachable !!!"
-			COMPUTE_RESULT="FAILED"
-		else
-			echo "Host Smartx-BPlus-$countryID is reachable."
-    
-			XEN=`ssh tein@Smartx-BPlus-$countryID 'sudo xl list | grep Domain-0'`
-    
-			if [ "${XEN:-null}" = null ]; then
-				echo "XEN Domain-0 (Hypervisor) is problem !!!"
-				echo "Please contact the administrator !!!"
-				COMPUTE_RESULT="FAILED"	
-			else
-				echo "XEN Domain-0 (Hypervisor) is running."
-			fi
-
-			VM=`ssh tein@Smartx-BPlus-$countryID 'sudo xl list | grep exp-vm-Smartx-BPlus'`
-
-			if [ "${VM:-null}" = null ]; then
-				echo "Experiment Virtual Machine is not started yet !!!"
-				echo "Starting Experiment Virtual Machine..."
-				ssh tein@Smartx-BPlus-$countryID "scp netcs@$SDNTOOLSVR:Exp-LifeCycle-Mgmt/exp-vm-Smartx-BPlus-$countryID.cfg ." >> $LOGDIR/$LOGFILE 2>&1
-				ssh tein@Smartx-BPlus-$countryID "sudo xl -f create /home/tein/exp-vm-Smartx-BPlus-$countryID.cfg" >> $LOGDIR/$LOGFILE 2>&1
-								
-				VM2=`ssh tein@Smartx-BPlus-$countryID 'sudo xl list | grep exp-vm-Smartx-BPlus'`
-				
-				if [ "${VM2:-null}" = null ]; then
-					echo "Experiment Virtual Machine is failed to start !!!"
-					COMPUTE_RESULT="FAILED"
-				else
-					echo "Experiment Virtual Machine is started."
-				fi
-				
-			else
-				echo "Experiment Virtual Machine is already started."
-			fi
-			
-			sleep 6
+		if [ "${VLC:-null}" = null ]; then
+			echo -e "VLC Packages are not installed !!!"
+			VLC_RESULT="FAILED"
 						
-			VM_PING=`ping exp-vm-Smartx-BPlus-$countryID -c 1 | grep icmp_req`
+			echo -e "Try to install packages...."
+			
+			ssh netcs@$SDNTOOLSVR "knife bootstrap exp-vm-SmartX-BPlus-$countryID -x root -r 'recipe[smartx-bp-function::vlc]'"
 
-			if [ "${VM_PING:-null}" = null ]; then	
-				echo "Experiment Virtual Machine is not reachable !!!"
-				COMPUTE_RESULT="FAILED"
+			#ssh root@exp-vm-smartx-bplus-$countryID "apt-get --force-yes --yes install vlc" 
+			#ssh root@exp-vm-smartx-bplus-$countryID "scp netcs@SDNTOOLSVR:Exp-LifeCycle-Mgmt/nongak.sd ." 
+			#ssh root@exp-vm-smartx-bplus-$countryID "scp netcs@SDNTOOLSVR:Exp-LifeCycle-Mgmt/start_vlc.sh ." 
+			
+			VLC2=`ssh root@exp-vm-smartx-bplus-$countryID 'dpkg -l | grep vlc'`
+			
+			if [ "${VLC2:-null}" = null ]; then
+				echo -e "VLC Packages are failed to installed !!!"
+				echo -e "Please contact your Administrator.\n"
+				VLC_RESULT="FAILED"
 			else
-				echo "Experiment Virtual Machine is reachable."
-				COMPUTE_RESULT="OK"	
+				echo -e "VLC Packages are successfully installed.\n"
+				VLC_RESULT="OK"
 			fi
-    	
+			
+		else
+			echo -e "VLC Packages are installed.\n"
+			VLC_RESULT="OK"
+
 		fi
 
-	echo -e "\nChecking done for Smartx-BPlus-$countryID.\n"
+	echo -e "Checking done for exp-vm-SmartX-BPlus-$countryID.\n"
 	
-	if [ "$COMPUTE_RESULT" =	"OK" ]; then
-		export COMPUTE_RESULT_$countryID="\033[32m[$COMPUTE_RESULT]\033[0m"
+	if [ "$VLC_RESULT" =	"OK" ]; then
+		export VLC_RESULT_$countryID="\033[32m[$VLC_RESULT]\033[0m"
 	else
-		export COMPUTE_RESULT_$countryID="\033[31m[$COMPUTE_RESULT]\033[0m"
+		export VLC_RESULT_$countryID="\033[31m[$VLC_RESULT]\033[0m"
 	fi
-	
+		
 	done
-	
-echo -e "Compute Resource Checking for Experiment is done...\n"
+
+echo -e "\nVLC Packages Checking Done.\n"
 
 }
 
-#
-# [3] Execute Experiment Function (Continuous PING)
-#
+function video_server_start {
 
-function experiment_video {
-
-echo -e "-----------------------------"
-echo -e "| Executing PING Experiment |"
-echo -e "-----------------------------"
-
-for countryID in $B_SITES
-do
-	
 echo -e "\n"
-echo -e "Start PING Application for ubuntu-experiment-vm-Smartx-B-$countryID"
-echo -e "-----------------------------------------------------------"
+echo -e "--------------------------------------------------"
+echo -e "| Check or Start VLC Video Server for Experiment |"
+echo -e "--------------------------------------------------"
 
-VM_PING=`ping ubuntu-experiment-vm-Smartx-B-$countryID -c 1 | grep icmp_req`
+for countryID in $SVR_SITES
+	do
+		echo -e "\nChecking VLC Video Server for exp-vm-Smartx-BPlus-$countryID"
+		echo -e "--------------------------------------------------------\n"
+		
+ 		VS=`ssh root@exp-vm-smartx-bplus-$countryID 'pgrep vlc'`
 
-	if [ "${VM_PING:-null}" = null ]; then	
-		echo "Experiment Virtual Machine is not reachable !!!"
-		EXP_RESULT="FAILED"		
-	else
-		echo "Experiment Virtual Machine is reachable."
-		echo "Start the PING application in Experiment Virtual Machine..."
-		
-		ssh root@ubuntu-experiment-vm-Smartx-B-$countryID "nohup ping 192.168.2.1 > /dev/null &"
-		sleep 2
-		
-		EXP_PING=`ssh root@ubuntu-experiment-vm-Smartx-B-$countryID 'pgrep ping'`
-	
-		if [ "${EXP_PING:-null}" = null ]; then	
-			echo -e "Experiment for ubuntu-experiment-vm-Smartx-B-$countryID is not started yet !!!\n"
-			EXP_RESULT="FAILED"
+		if [ "${VS:-null}" = null ]; then
+			echo -e "Video Server is not started !!!"
+			VS_RESULT="FAILED"
+						
+			echo -e "Try to start Video Server...."
+			ssh netcs@exp-vm-SmartX-BPlus-$countryID './start_vlc.sh' &
+			sleep 5
+			kill -2 $!
+			
+			VS2=`ssh root@exp-vm-smartx-bplus-$countryID 'pgrep vlc'`
+			
+			if [ "${VS2:-null}" = null ]; then
+				echo -e "Video Server is failed to start !!!"
+				echo -e "Please contact your Administrator.\n"
+				VS_RESULT="FAILED"
+			else
+				echo -e "Video Server is started.\n"
+				VS_RESULT="OK"
+			fi
+			
 		else
-			echo -e "Experiment for ubuntu-experiment-vm-Smartx-B-$countryID is started.\n"
-			EXP_RESULT="OK"
+			echo -e "Video Server is started.\n"
+			VS_RESULT="OK"
+
 		fi
-		
-	fi
 
-if [ "$EXP_RESULT" =	"OK" ]; then
-	export EXP_RESULT_$countryID="\033[32m[$EXP_RESULT]\033[0m"
-else
-	export EXP_RESULT_$countryID="\033[31m[$EXP_RESULT]\033[0m"
-fi
+	echo -e "Checking done for exp-vm-SmartX-BPlus-$countryID.\n"
 	
-done
-
-for countryID in $BP_SITES
-do
-	
-echo -e "\n"
-echo -e "Start PING Application for ubuntu-experiment-vm-Smartx-B-$countryID"
-echo -e "-----------------------------------------------------------"
-
-VM_PING2=`ping exp-vm-Smartx-BPlus-$countryID -c 1 | grep icmp_req`
-
-	if [ "${VM_PING2:-null}" = null ]; then	
-		echo "Experiment Virtual Machine is not reachable !!!"
-		EXP_RESULT="FAILED"		
+	if [ "$VS_RESULT" =	"OK" ]; then
+		export VS_RESULT_$countryID="\033[32m[$VS_RESULT]\033[0m"
 	else
-		echo "Experiment Virtual Machine is reachable."
-		echo "Start the PING application in Experiment Virtual Machine..."
-		
-		ssh root@exp-vm-Smartx-BPlus-$countryID "vlc -vvv nongak.sd --loop --sout '#standard{access=http,mux=ogg,dst=192.168.2.10:8080}'"
-		sleep 2
-		
-		EXP_VLC=`ssh root@exp-vm-Smartx-BPlus-$countryID 'pgrep ping'`
-	
-		if [ "${EXP_VLC:-null}" = null ]; then	
-			echo -e "Experiment for exp-vm-Smartx-BPlus-$countryID is not started yet !!!\n"
-			EXP_RESULT="FAILED"
-		else
-			echo -e "Experiment for exp-vm-Smartx-BPlus-$countryID is started.\n"
-			EXP_RESULT="OK"
-		fi
-		
+		export VS_RESULT_$countryID="\033[31m[$VS_RESULT]\033[0m"
 	fi
+		
+	done
 
-if [ "$EXP_RESULT" =	"OK" ]; then
-	export EXP_RESULT_$countryID="\033[32m[$EXP_RESULT]\033[0m"
-else
-	export EXP_RESULT_$countryID="\033[31m[$EXP_RESULT]\033[0m"
-fi
-	
-done
+echo -e "\nVideo Server Check or Start is Done.\n"
 
 }
+
+
+# Start VLC video client in the GIST site and run it at background
+#
+# Because the experiment VM didn't have any GUI packages, 
+# redirect the display into monitoring terminal with X11 through SSH
+#
+
+function video_client_start {
+
+echo -e "----------------------------------------------"
+echo -e "| Check or Start Video Client for Experiment |"
+echo -e "----------------------------------------------"
+		
+VC=`ssh root@exp-vm-smartx-bplus-GIST 'pgrep vlc'`
+
+if [ "${VC:-null}" = null ]; then
+	
+	echo -e "Video Client is not started !!!"
+	VC_RESULT="FAILED"
+					
+	echo -e "Try to start Video CLient...."
+    echo -e "Start the VLC Client for SmartX-BPlus-MYREN Stream..."
+	ssh -X netcs@exp-vm-SmartX-BPlus-GIST 'vlc --loop http://192.168.2.120:8080 --intf rc --rc-host=exp-vm-Smartx-BPlus-GIST:8080' &
+	#sleep 2
+	#echo -e "Start the VLC Client for SmartX-BPlus-ID Stream..."
+	#ssh -X netcs@exp-vm-SmartX-BPlus-GIST 'vlc --loop http://192.168.2.100:8080 --intf rc --rc-host=exp-vm-Smartx-BPlus-GIST:8080' &
+
+	sleep 5
+
+	VC2=`ssh root@exp-vm-smartx-bplus-GIST 'pgrep vlc'`
+
+	if [ "${VC2:-null}" = null ]; then
+		
+		echo -e "Video Client is failed to start !!!"
+		echo -e "Please contact your Administrator.\n"
+		VC_RESULT="FAILED"
+	else
+		echo -e "Video Client is started.\n"
+		VC_RESULT="OK"
+	fi
+
+else
+	echo -e "Video Client is started.\n"
+	VC_RESULT="OK"
+fi
+	
+if [ "$VC_RESULT" =	"OK" ]; then
+	export VC_RESULT_GIST="\033[32m[$VC_RESULT]\033[0m"
+else
+	export VC_RESULT_GIST="\033[31m[$VC_RESULT]\033[0m"
+fi
+	
+echo -e "\nVideo Client Check or Start is Done.\n"
+	
+}
+
+
+function video_measurement {
+
+echo -e "---------------------------------------------"
+echo -e "| Starting Measurement for Video Experiment |"
+echo -e "---------------------------------------------"
+		
+if [ "$VC_RESULT" =	"OK" ]; then
+	
+	echo -e "Video Streaming is working.\n"
+	echo -e "Start Video Performance Measurement for SmartX-BPlus Stream..."
+	#ssh netcs@exp-vm-SmartX-BPlus-GIST 'bash ./openrtsp.sh TS'
+	#ssh netcs@exp-vm-SmartX-BPlus-GIST 'bash ./openrtsp.sh ID'
+	VC_MEASURE="OK"
+	
+else
+	echo -e "Video Streaming is not running !!!"
+	echo -e "Try to verify with Video Client First !!!"
+	VC_MEASURE="FAILED"
+	
+fi
+	
+if [ "$VC_RESULT" =	"OK" ]; then
+	export VC_MEASURE_GIST="\033[32m[$VC_RESULT]\033[0m"
+else
+	export VC_MEASURE_GIST="\033[31m[$VC_RESULT]\033[0m"
+fi
+
+#cd workspace/OFTEIN-Visibility
+rm vlc-stats.txt
+#rm sflow-dump.json
+java -jar vlc-client-nogui.jar > vlc-stats.txt &
+#./sflow.sh &
+
+echo -e "\nVideo Performance Measurement is Done.\n"
+	
+}
+
+
 
 #
 # Main Script
 #
 
 echo -e "\n"
-echo -e "####################################################"
-echo -e "# Checking Infrastructure Resources for Experiment #"
-echo -e "####################################################"
+echo -e "############################################"
+echo -e "# Automatic Execution for Video Experiment #"
+echo -e "############################################"
 
 touch $LOGDIR/$LOGFILE
 
-for countryID in GIST ID MY TH PH VN VT MYREN MY2 PKS
-do
+vlc_check
+sleep 5
+video_server_start
+sleep 5
+video_client_start
+sleep 5 
+video_measurement
+sleep 10
 
-	export COMPUTE_RESULT_$countryID="[N/A]"
-	export TUNNEL_RESULT_$countryID="[N/A]"
-	export EXP_RESULT_$countryID="[N/A]"
-	
-done
 
-check_flowspace
-sleep 2
-check_network
-sleep 2
-check_compute
-sleep 3
-experiment_video
-sleep 2
+echo -e "\nAutomatic Execution for Video Experiment is Done.\n"
+echo -e "############################"
+echo -e "# Execution Result Summary #"
+echo -e "############################\n"
 
-echo -e "Checking Infrastructure Resource for Experiment is Done.\n"
-echo -e "###########################"
-echo -e "# Checking Result Summary #"
-echo -e "###########################\n"
-echo -e "FlowSpace Resource Status				: $FLOW_RESULT\n"
-echo -e "Compute Resource Status for Smartx-BPlus-GIST 		: $COMPUTE_RESULT_GIST"
-echo -e "Compute Resource Status for Smartx-BPlus-ID 		: $COMPUTE_RESULT_ID"
-echo -e "Compute Resource Status for Smartx-BPlus-MY 		: $COMPUTE_RESULT_MY"
-echo -e "Compute Resource Status for Smartx-B-TH 		: $COMPUTE_RESULT_TH"
-echo -e "Compute Resource Status for Smartx-B-PH 		: $COMPUTE_RESULT_PH"
-echo -e "Compute Resource Status for Smartx-B-VN 		: $COMPUTE_RESULT_VN"
-echo -e "Compute Resource Status for Smartx-BPlus-MYREN  	: $COMPUTE_RESULT_MYREN"
-echo -e "Compute Resource Status for Smartx-BPlus-PKS 		: $COMPUTE_RESULT_PKS\n"
-echo -e "Network Resource Status for Smartx-BPlus-GIST 		: $TUNNEL_RESULT_GIST"
-echo -e "Network Resource Status for Smartx-BPlus-ID 		: $TUNNEL_RESULT_ID"
-echo -e "Network Resource Status for Smartx-BPlus-MY 		: $TUNNEL_RESULT_MY"
-echo -e "Network Resource Status for Smartx-BPlus-TH 		: $TUNNEL_RESULT_TH"
-echo -e "Network Resource Status for Smartx-BPlus-PH 		: $TUNNEL_RESULT_PH"
-echo -e "Network Resource Status for Smartx-BPlus-VN 		: $TUNNEL_RESULT_VT"
-echo -e "Network Resource Status for Smartx-BPlus-MYREN  	: $TUNNEL_RESULT_MY2"
-echo -e "Network Resource Status for Smartx-BPlus-PKS  		: $TUNNEL_RESULT_PK\n"
-echo -e "Experiment Execution for exp-vm-Smartx-BPlus-GIST	: $EXP_RESULT_GIST"
-echo -e "Experiment Execution for exp-vm-Smartx-BPlus-ID		: $EXP_RESULT_ID"
-echo -e "Experiment Execution for exp-vm-Smartx-BPlus-MY		: $EXP_RESULT_MY"
-echo -e "Experiment Execution for exp-vm-Smartx-B-TH		: $EXP_RESULT_TH"
-echo -e "Experiment Execution for exp-vm-Smartx-B-PH		: $EXP_RESULT_PH"
-echo -e "Experiment Execution for exp-vm-Smartx-B-VN		: $EXP_RESULT_VN"
-echo -e "Experiment Execution for exp-vm-Smartx-BPlus-MYREN	: $EXP_RESULT_MYREN"
-echo -e "Experiment Execution for exp-vm-Smartx-BPlus-PKS	: $EXP_RESULT_PKS"
+echo -e "Video Packages Check for exp-vm-Smartx-BPlus-GIST 	: $VLC_RESULT_GIST"
+echo -e "Video Packages Check for exp-vm-Smartx-BPlus-TEST 	: $VLC_RESULT_TEST"
+echo -e "Video Packages Check for exp-vm-Smartx-BPlus-ID 	: $VLC_RESULT_ID\n"
+
+echo -e "Video Server Execution for exp-vm-Smartx-BPlus-TEST	: $VS_RESULT_TEST"
+echo -e "Video Server Execution for exp-vm-Smartx-BPlus-ID	: $VS_RESULT_ID"
+
+echo -e "Video Client Execution for exp-vm-Smartx-BPlus-GIST	: $VC_RESULT_GIST"
+
+#echo -e "Video Measurement for exp-vm-Smartx-BPlus-GIST		: $VC_MEASURE_GIST"
+
 echo -e "\n"
 echo -e "Please check the \"$LOGFILE\" for detail result."
 echo -e "\n"

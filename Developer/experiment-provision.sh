@@ -20,7 +20,7 @@ FLOWSPACE="192.168.2.0"
 LOGDIR="log"
 LOGRES="result"
 LOGFILE=experiment.check.`date +%Y%m%d.%H%M%S`.log
-BP_SITES="GIST TEST" # separated by spaces
+BP_SITES="GIST MYREN PH MY" # separated by spaces
 
 # Function Definition
 # ===================
@@ -359,7 +359,8 @@ cd $LOGRES
 enscript -B -f Courier-Bold14 ping-test.txt -o - | ps2pdf - graph.pdf
 convert -density 300 -trim graph.pdf -quality 100 graph-temp.jpg
 convert -resize 600x400 graph-temp.jpg graph.jpg
-scp graph.jpg root@NML:images/
+#scp graph.jpg root@NML:images/
+cp graph.jpg ../images/
 cd ..
 
 }

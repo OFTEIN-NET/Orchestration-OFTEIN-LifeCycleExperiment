@@ -22,7 +22,7 @@ LOGFILE=experiment.check.`date +%Y%m%d.%H%M%S`.log
 B_SITES=""
 #BP_SITES="GIST ID" # separated by spaces
 
-BP_SITES="GIST TEST" # separated by spaces
+BP_SITES="GIST MYREN" # separated by spaces
 
 # Function Definition
 # ===================
@@ -89,7 +89,7 @@ for countryID in $B_SITES $BP_SITES MY2
 		
  		TUNNEL_NAME=GJ"$countryID"
  
-		TUNNEL=`cat ~/AdminSDNController/Tunnel/active_tunnel.list | grep $TUNNEL_NAME`
+		TUNNEL=`ssh netcs@$SDNTOOLSVR "cat ~/AdminSDNController/Tunnel/tunnel.list|grep $TUNNEL_NAME"`
 
 		if [ "${TUNNEL:-null}" = null ]; then
 			echo -e "Tunnel for smartx-B-$countryID is Down !!!"
@@ -222,8 +222,8 @@ for countryID in $BP_SITES
                         if [ "${VM:-null}" = null ]; then
                                 echo "Experiment Virtual Machine is not started yet !!!"
                                 echo "Starting Experiment Virtual Machine..."
-                                ssh tein@Smartx-BPlus-$countryID "scp netcs@$SDNTOOLSVR:Exp-LifeCycle-Mgmt/exp-vm-Smartx-BPlus-$countryID.cfg ." >> $LOGDIR/$LOGFILE 2>&1
-                                ssh tein@Smartx-BPlus-$countryID "sudo xl -f create /home/tein/exp-vm-Smartx-BPlus-$countryID.cfg" >> $LOGDIR/$LOGFILE 2>&1
+                                ssh tein@Smartx-BPlus-$countryID "scp netcs@$SDNTOOLSVR:Exp-LifeCycle-Mgmt/exp-vm-SmartX-BPlus-$countryID.cfg ." >> $LOGDIR/$LOGFILE 2>&1
+                                ssh tein@Smartx-BPlus-$countryID "sudo xl -f create /home/tein/exp-vm-SmartX-BPlus-$countryID.cfg" >> $LOGDIR/$LOGFILE 2>&1
 
                                 VM2=`ssh tein@Smartx-BPlus-$countryID 'sudo xl list | grep exp-vm-Smartx-BPlus'`
 
@@ -330,14 +330,14 @@ PROC=2
 COUNT=1
 j=0
 
-SITES="$B_SITES $BP_SITES"
+#SITES="$B_SITES $BP_SITES"
 
 echo -e "\n"
 echo -e "------------------------------"
 echo -e "| Executing iperf Experiment |"
 echo -e "------------------------------"
 
-for countryID in $B_SITES $BP_SITES
+for countryID in $BP_SITES
 do
 
 	SRVNAME=$countryID
@@ -378,7 +378,7 @@ do
 	i=1
 	while [ $i -ne 0 ];do		
 		#Get one site name from SITES lists and compare it with Server name
-		CLNAME=`echo $SITES | awk -v ii="$i" '{print $ii}'`
+		CLNAME=`echo $BP_SITES | awk -v ii="$i" '{print $ii}'`
 		
 		if [ "${CLNAME:-null}" == null ]; then
 			break	
@@ -390,16 +390,16 @@ do
 		fi
 
 		#Get Client Full Name from /etc/hosts file (e.g ubuntu-experiment-vm-SmartxB-XX)
-		TEMP=`echo $B_SITES | grep $CLNAME`
+		#TEMP=`echo $BP_SITES | grep $CLNAME`
 		
-		if [ "${TEMP:-null}" != null ]; then
-			TEMP=$(cat /etc/hosts | grep vm-Smartx-B- | grep $CLNAME | awk '{print $2}')
-		else
-			TEMP=$(cat /etc/hosts | grep exp-vm-SmartX-BPlus | grep $CLNAME | awk '{print $2}')
-		fi
+#		if [ "${TEMP:-null}" != null ]; then
+#			TEMP=$(cat /etc/hosts | grep vm-Smartx-B- | grep $CLNAME | awk '{print $2}')
+#		else
+#			TEMP=$(cat /etc/hosts | grep exp-vm-SmartX-BPlus | grep $CLNAME | awk '{print $2}')
+#		fi
 
-		CLSITE=$(echo $TEMP | awk '{print $1}')
-
+		#CLSITE=$(echo $TEMP | awk '{print $1}')
+		CLSITE=exp-vm-Smartx-BPlus-$CLNAME
 
 
 		echo "CLSITE=$CLSITE"
@@ -537,7 +537,8 @@ if [ $j -ne -1 ]; then
 	convert -density 300 -trim IPERF_RES.eps -quality 100 graph-temp.jpg
 	convert -resize 600x400 graph-temp.jpg graph.jpg
 	#scp graph.jpg nml@203.237.53.202:workspace/openflow_gui/images/
-	scp graph.jpg root@NML:images/
+	#scp graph.jpg root@NML:images/
+	cp graph.jpg ../images/
 	cd ..
 fi
 }
