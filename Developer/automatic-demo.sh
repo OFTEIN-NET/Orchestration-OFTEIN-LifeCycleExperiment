@@ -21,15 +21,15 @@ ping-demo ()
 # Open SDN UI Window
 echo -e "\n\nOpen SDN Experimenter UI"
 echo -e "..........."
-sleep 3
-java -jar SDN-UI.jar &
-sleep 3
+#sleep 3
+#java -jar SDN-UI.jar &
+#sleep 3
 
 # Execute the Experiment and Measurement
 echo -e "\nResource Checking Execute Experiment"
 echo -e "..........."
 sleep 3
-./experiment-provision.sh
+./experiment-check.v6.sh
 sleep 3
 
 # Show the result from local folder images
@@ -51,15 +51,15 @@ iperf-demo ()
 
 echo -e "\n\nOpen SDN Experimenter UI"
 echo -e "..........."
-sleep 3
-java -jar SDN-UI.jar &
-sleep 3
+#sleep 3
+#java -jar SDN-UI.jar &
+#sleep 3
 
 # Execute the Experiment and Measurement
 echo -e "\nResource Checking Execute Experiment"
 echo -e "..........."
 sleep 3
-./experiment-execute-iperf.sh
+./experiment-check-iperf.v5.sh
 sleep 3
 
 # Show the result from local folder images
@@ -79,17 +79,17 @@ video-demo ()
 # Open SDN UI Window
 echo -e "\nOpen SDN Experimenter UI"
 echo -e "..........."
-sleep 3
-java -jar SDN-UI.jar &
-sleep 3
+#sleep 3
+#java -jar SDN-UI.jar &
+#sleep 3
 
 # Execute the Experiment and Measurement
 echo -e "\nResource Checking Execute Experiment"
 echo -e "..........."
 sleep 3
-./experiment-execute-video.sh
+./experiment-video.v6.sh
 sleep 60
-killall java
+#killall java
 
 # Show the result from local folder images
 echo -e "\nDisplaying Experiment Result"

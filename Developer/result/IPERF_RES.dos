@@ -1,0 +1,15 @@
+set term postscript eps
+set output 'IPERF_RES.eps'
+set xlabel "COUNT"
+set ylabel "Mbps"
+set samples 500
+set style line 81 lt rgb "#808080"
+set style line 81 lt 0
+set grid ytics linestyle 81
+set xtics auto
+set xtics nomirror
+set ytics auto
+set ytics nomirror
+set key left top
+p 'MYRENtoGIST.dat' u 1:2 w l lt 0 lc 0 lw 2 t 'MYRENtoGIST', \
+'GISTtoMYREN.dat' u 1:2 w l lt 1 lc 1 lw 2 t 'GISTtoMYREN'
