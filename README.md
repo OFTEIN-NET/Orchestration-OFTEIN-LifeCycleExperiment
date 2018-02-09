@@ -1,0 +1,3 @@
+OF@TEIN experiment lifecycle to describe how researchers carry out experiments over the shared infrastructure. This lifecycle interpretation helps OF@TEIN operator to provide the needed resources for experiments and also helps the users to understand different stages of experiments and matching support tools.
+
+The proposed "Automated LifeCycle Experiment Tools" is used for OF@TEIN to facilitate easy and fast experimentation by leveraging automated resource provisioning and experiment execution.
